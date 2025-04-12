@@ -58,8 +58,8 @@ navigator.geolocation.getCurrentPosition(async pos => {
   const today = new Date();
 
 // ✅ จำลองเวลา 10:00
-const nowTime = 10 * 60;
-// const nowTime = today.getHours() * 60 + today.getMinutes();
+// const nowTime = 10 * 60;
+const nowTime = today.getHours() * 60 + today.getMinutes();
 
 // ✅ log เวลาเพื่อดูใน console
 const hh = String(Math.floor(nowTime / 60)).padStart(2, '0');
