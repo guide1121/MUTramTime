@@ -5,6 +5,7 @@
   <title>🚋 ป้ายรถแทรมใกล้คุณ</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/x-icon" href="tram.png">
   <link href="https://fonts.googleapis.com/css2?family=Kanit&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -12,6 +13,14 @@
     <h1>🚏 ป้ายรถแทรมใกล้คุณ</h1>
     <div id="loader">📡 กำลังค้นหาตำแหน่งของคุณ...</div>
     <div id="signs" style="display:none;"></div>
+  </div>
+  
+  <div id="popup" class="popup" style="display:none;">
+    <div class="popup-content">
+      <span id="popup-close" class="close">&times;</span>
+      <h3 id="popup-title"></h3>
+      <div id="popup-body"></div>
+    </div>
   </div>
 
   <script src="script.js"></script>
