@@ -1,6 +1,7 @@
 const SHEET_ID = '15up7MfmXnTcZgBCRttnhjFAdHafUetK8OfECLXIqKcE';
 const SIGN_SHEET = 'TramSignLocation';
 const SCHEDULE_SHEET = 'TramSchedule';
+const HOLIDAY_API = `https://date.nager.at/api/v3/PublicHolidays/${new Date().getFullYear()}/TH`;
 
 const getSheetData = async (sheetName) => {
   const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
@@ -9,6 +10,18 @@ const getSheetData = async (sheetName) => {
   const json = JSON.parse(text.substring(47, text.length - 2));
   const rows = json.table.rows;
   return rows.map(r => r.c.map(c => c?.v));
+};
+
+const isTodayHoliday = async () => {
+  try {
+    const res = await fetch(HOLIDAY_API);
+    const holidays = await res.json();
+    const todayStr = new Date().toISOString().slice(0, 10);
+    return holidays.some(h => h.date === todayStr);
+  } catch (e) {
+    console.warn("⚠️ ไม่สามารถโหลดวันหยุดได้:", e);
+    return false; // fallback เป็นวันธรรมดา
+  }
 };
 
 const haversine = (lat1, lon1, lat2, lon2) => {
@@ -32,7 +45,11 @@ navigator.geolocation.getCurrentPosition(async pos => {
 
   const today = new Date();
   const nowTime = today.getHours() * 60 + today.getMinutes();
-  const dayText = ["sunday","monday","tuesday","wednesday","thursday","friday","saturday"][today.getDay()];
+
+  let dayText = ["sunday","monday","tuesday","wednesday","thursday","friday","saturday"][today.getDay()];
+  if (await isTodayHoliday()) {
+    dayText = "sunday"; // ใช้เวลาวันหยุดเหมือนวันอาทิตย์
+  }
 
   const signList = signs.map(r => {
     const name = r[0];
@@ -63,7 +80,7 @@ navigator.geolocation.getCurrentPosition(async pos => {
       const m = String(nextTime % 60).padStart(2, '0');
       timeText = `🕒 ${h}:${m}`;
     } else {
-      timeText = "📅 วันนี้หมดรอบแล้ว";
+      timeText = "📅 วันนี้หมดรอบแล้ว รอรอบพรุ่งนี้";
     }
 
     return { name, lat, lng, distance, timeText };
